@@ -1,0 +1,453 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[english, russian]{babel}
+
+\usepackage[pdftex,
+            pdfauthor={Андрей Ч.},
+            pdftitle={лр1 лр2 моделирование},
+            pdfsubject={Математическое моделирование}]{hyperref}
+
+\AfterPreamble{\hypersetup{
+  pdfauthor={Андрей Ч.},
+  pdftitle={лр1 лр2 моделирование},
+  pdfsubject={Математическое моделирование}
+}}
+
+\usepackage{amsmath}
+
+\usepackage{xcolor}
+
+\usepackage{pgf}
+
+\usepackage{subcaption}
+
+\usepackage{graphicx}
+\usepackage{grffile}
+
+\usepackage{float}
+
+\usepackage{geometry}
+\geometry{left=2cm}
+\geometry{right=1.5cm}
+\geometry{top=1cm}
+\geometry{bottom=2cm}
+
+\begin{document}
+
+    \section*{Общее для ЛР2 и ЛР3}
+
+    Постановка задачи:
+
+    Цилинр радиуса R заполнен изулучающим газом, 
+    температурное поле T(r) задано.
+
+    $z=\frac{r}{R}$ - безразмерная независимая величина, $r$ - радиус слоя, для 
+    которого находим зависимые величины.
+
+    Требуется вычислить поток излучения $F(z)$ и объёмную плотность излучения $u(z)$
+    на промежутке $z={0,1}$
+
+    \begin{figure}[H]
+        %\includegraphics[width=.4\linewidth]{\input{k1.pgf}}
+        %\resizebox{\textwidth}{!}{\input{visual.pdf}}
+        \includegraphics[width=\linewidth]{visual.pdf}
+        \caption{Визуализация задачи}
+    \end{figure}
+
+    По смыслу задачи:
+
+    $F(z)$ - поток энергии через слой (от оси к стенке цилиндра);
+
+    $u(z)$ - объёмная плотность энергии излучения в слое.
+
+    \vspace{1cm}
+
+    Не смотря на размерности потока и объёмной плотности ($\frac{\text{Вт}}{\text{см}^2}$
+    , $\frac{\text{Дж}}{\text{см}^3}$)
+    , задача одномерная
+    (решается относительно z - одной независимой переменной, вдоль радиуса
+    поперечного сечения цилидра).
+
+    \newpage
+    Исходная система уравнений:
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            F=-\frac{c}{3Rk(T(z))}\frac{du}{dz}\\
+            \frac{1}{zR}\frac{d}{dz}(zF) = ck(T(z))(u_p - u)\\
+            T(z)=(T_{w}-T_{0})*z^p + T_{0}\\
+            u_p(z)=\frac{0.0003084}{e^{\frac{47990}{T(z)}}-1}
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    \vspace{1cm}
+    Начальные условия:
+
+    \Large
+    \begin{equation}
+        \begin{aligned}
+            &z=0,F(0)=0\\
+            &z=1,F(1)=0.393cu(1)\\
+            &T_{w}=2000K\\
+            &T_{0}=10000K\\
+            &R=0.0035m\\
+            &c=299792458\frac{m}{s^2}\\
+            &p=4
+        \end{aligned}
+    \end{equation}
+    \normalsize
+
+    \vspace{1cm}
+    Замены:
+
+    \Large
+    \begin{equation}
+        \begin{aligned}
+            &a(z)=-\frac{c}{3Rk(z)}\\
+            &b(z)=cRk(z)
+        \end{aligned}
+    \end{equation}
+    \normalsize
+
+    \vspace{1cm}
+    Условности нотации:
+
+    \Large
+    \begin{equation}
+        \begin{aligned}
+            &k(z)\equiv k(T(z))\\
+            &z_n = h * n , h - \text{шаг численного метода}\\
+            &a(z_n) \equiv a_n, (\text{аналогично для } b(z), k(z), u_p(z), F(z), u(z))
+        \end{aligned}
+    \end{equation}
+    \normalsize
+    
+
+    \newpage
+    $k(T)$ выглядит следующим образом:
+
+    %\begin{figure}[!h]
+    %    \centering
+    %    \resizebox{0.8\textwidth}{!}{\input{k1.pgf}}
+    %\end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}{.5\textwidth}
+          \centering
+          %\includegraphics[width=.4\linewidth]{\input{k1.pgf}}
+          \resizebox{\textwidth}{!}{\input{k1.pgf}}
+          \caption{k(T) - Вариант 1}
+          \label{fig:sub1}
+        \end{subfigure}%
+        \begin{subfigure}{.5\textwidth}
+          \centering
+          %\includegraphics[width=.4\linewidth]{\input{k2.pgf}}
+          \resizebox{\textwidth}{!}{\input{k2.pgf}}
+          \caption{k(T) - Вариант 2}
+          \label{fig:sub2}
+        \end{subfigure}
+        \label{fig:test}
+    \end{figure}
+
+
+    Если интерполировать как на графике (полиномом 1 степени), то получим некоторую ошибку.
+
+    Примения предложенный в методе метод ($t\_ln=ln(T)$, $k\_ln=ln(k)$), получаем:
+
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}{.5\textwidth}
+          \centering
+          %\includegraphics[width=.4\linewidth]{\input{k1.pgf}}
+          \resizebox{\textwidth}{!}{\input{k1_ln.pgf}}
+          \caption{k\_ln(t\_ln) - Вариант 1}
+          \label{fig:sub1}
+        \end{subfigure}%
+        \begin{subfigure}{.5\textwidth}
+          \centering
+          %\includegraphics[width=.4\linewidth]{\input{k2.pgf}}
+          \resizebox{\textwidth}{!}{\input{k2_ln.pgf}}
+          \caption{k\_ln(t\_ln) - Вариант 2}
+          \label{fig:sub2}
+        \end{subfigure}
+        \label{fig:test}
+    \end{figure}
+
+    Ошибка ожидается около-нулевой, $k(T)$ вычисляется следующим образом:
+
+    $k(T) = e^{c_{1} * ln(T) + c_{0}}$
+
+    \small
+    *$c_{1}$ и $c_{0}$ можно посчитать руками, решив систему уравнений 1 степени для крайних значний
+    $k(2000)$, $k(10000)$. Значния полученные с помощью numpy.polyfit: 
+    $c_{1}=2.99996105$ , $c_{0}=-27.60599153$ - Вариант 1,
+    $c_{1}=3.0$ , $c_{0}=-22.33270375$ - Вариант 2.
+    \normalsize
+
+    \newpage
+    \section*{ЛР2}
+
+    Дифференцируем $zF$ : $\frac{d}{dz}(zF)=F+z*\frac{dF}{dz}$
+
+    Получаем:
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            \frac{du}{dz}=\frac{F}{a(z)}\\
+            \frac{dF}{dz}=b(z)(u_p - u)-\frac{F}{z}
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    Данная задача решается как задача Коши, если задать начальное условие для $u$:
+
+    \begin{equation*}
+        u(0)=\mathcal{E}u_p(0)
+    \end{equation*}
+
+    Ожидая, что решение может быть найдено при начальном $\mathcal{E}\in\{0..1\}$
+    и что $u(1)$ монотонно зависит от $\mathcal{E}$,
+    находим решение методом стрельбы + дихотомии:
+
+    \begin{verbatim}
+        Epsilon1 = 0.0
+        Epsilon2 = 1.0
+        Err = inf
+
+        цикл пока fabs(Err) > заданная точность
+
+            Epsilon = (Epsilon1 + Epsilon2) / 2
+            Err = Рунге-Кутта(Epsilon)
+
+            если Err > 0.0
+                Epsilon1 = Epsilon
+            иначе
+                Epsilon2 = Epsilon
+            конец если
+
+        конец цикла
+    \end{verbatim}
+
+    При этом $Err = \frac{F^{(N)}(1) - 0.393cu^{(N)}(1)}{0.393cu^{(N)}(1)} =
+    \frac{F^{(N)}(1)}{0.393cu^{(N)}(1)} - 1$
+
+    Вычисления завершаются на N-ой итерации, когда для очередного приближения 
+    $F^{(N)}(z)$, $u^{(N)}(z)$ выполняется
+    $\left\lvert Err \right\rvert<= \delta$, 
+    где $\delta$ - заданная точность.
+
+    \newpage
+    Для решения задачи Коши используем формулы Рунге-Кутты IV порядка точности 
+    для двух зависимых переменных:
+
+    \begin{verbatim}
+
+        F = 0
+        u = Epsilon * u_p(0)
+        z = 0
+
+        пока z <= 1
+
+            P_1 = F / a(z)
+            K_1 = b(z) * (u_p(z) - u) - F / z
+
+            z += h / 2
+
+            P_2 = (F + K_1 * h / 2) / a(z)
+            K_2 = b(z) * (u_p(z) - u - P_1 * h / 2) - (F + K_1 * h / 2) / z
+
+            P_3 = (F + K_2 * h / 2) / a(z)
+            K_3 = b(z) * (u_p(z) - u - P_2 * h / 2) - (F + K_2 * h / 2) / z
+
+            z += h / 2
+
+            P_4 = (F + K_3 * h) / a(z)
+            K_4 = b(z) * (u_p(z) - u - P_3 * h) - (F + K_3 * h) / z
+
+            F += (K_1 + 2 * (K_2 + K_3) + K_4) * h / 6
+            u += (P_1 + 2 * (P_2 + P_3) + P_4) * h / 6
+
+        конец пока
+    \end{verbatim}
+
+    При этом на 1-й итерации при вычислении $K_{1}$ произойдёт деление на 0, поэтому целесообразно
+    вынести эту итерацию из цикла и проинициализировать $K_{1}:=b(z) * (u_p(z)-u)$.
+
+    \vspace{2cm}
+    *Возможно оптимизировать путем выделения общих для $K_2$ и $K_3$, $P_2$ и $P_3$ частей, а так же
+    общей для $a(z), b(z)$ части - $Rk(z)$.
+
+    \newpage
+    \subsection*{Вопросы при защите лабораторной работы}
+
+    \textbf{1. Какие способы тестирования программы можете предложить?}
+
+    \color{red}
+
+    Существует вразумительный ответ, но я его забыл))) 
+
+    Точно не стоит предлагать сравнивать результаты вычислений с реальными измерениями, 
+    т.к. мы моделируем специально для того, чтобы не экспериментировать ирл.
+
+    Вероятнее всего, речь про тривиальные случаи. Потвикать параметры задачи так, 
+    чтобы решение было очевидным, и сравнить с результатом работы программы. 
+    Например: задать правое краевое условие $F(1)=100\frac{\text{Вт}}{\text{м}^2}$ и проверить, выполняется ли 
+    оно в результате работы программы.
+
+    \color{black}
+
+    \vspace{1cm}
+    \textbf{2. Приведите классификацию методов решения систем ОДУ для задачи Коши}
+
+    Аналитические. Можем решить - находим общее решение, используя начальное условие получаем
+    частное решение. (такого почти не бывает)
+
+    Приближенно аналитические. Пикар. Если удаётся интегрировать правую часть много раз, 
+    получаем сходящийся к точному решению ряд. Сходится плохо. (тоже почти не бывает, но есть
+    исключительные задачи по типу $u'(x)=x^2+u^2$, для которых решение чисто аналитически не найти).
+
+    Численные методы: 
+    
+    \begin{itemize}
+        \item одношаговые (для вычисления значений в следующем узле требуется знать значения
+        только в предыдущем узле) / многошаговые (для вычисления значений в следующем узле требуется 
+        знать значения в нескольких предыдущих узлах).
+        \item явные ($u_n = \psi (x_{n-1}, u_{n-1}, f(x_{n-1}, u_{n-1}))$) / неявные
+        ($u_n = \psi (x_{n-1}, u_{n-1}, f(x_{n}, u_{n}))$).
+        В случае явных следующее значание выражается через предыдущее. В случае неявных
+        следующее значание выражается через предыдущее И производную следующего - 
+        нельзя применить 'как есть' , нужно искать решение уравнения - не всегда возможно.
+        Как правило, неявные методы более устойчивые. Зачастую (всегда, в случае монотонных функций)
+        явный и неявный метод сходятся к
+        решению с разных сторон, поэтому можно использовать совместно для отыскания интервала, 
+        в котором находится точное решение.
+    \end{itemize}
+    
+    \vspace{1cm}
+    \textbf{3. Получите систему разностных уравнений для решения сформулированной задачи неявным 
+    методом Эйлера. Опишите алгоритм реализации полученных уравнений.}
+
+    Неявный метод Эйлера для двух переменных: 
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            f_n = f_{n-1} + h f^{'}(x_n, f_n, t_n)\\
+            t_n = t_{n-1} + h t^{'}(x_n, t_n, f_n)
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    Для нашей задачи получаем:
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            F_n = F_{n-1} + h(b(z_n)({u_p}_n - u_n) - \frac{F_n}{z_n})\\
+            u_n = u_{n-1} + h\frac{F_n}{a(z_n)}
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    %Получаем выражание для $F_n$:
+    Подставляем (6.2) в (6.1):
+
+    \Large
+    \begin{equation}
+        F_n = F_{n-1} + h(b(z_n)({u_p}_n - u_{n-1} - \frac{F_n}{a(z_n)} h) - \frac{F_n}{z_n})\\
+    \end{equation}
+    \normalsize
+
+    Выражаем $F_n$ из (7):
+
+    \Large
+    \begin{equation}
+        F_n = \frac{F_{n-1} + hb_n({u_p}_n - u_{n-1})}{1 + \frac{h}{z_n} + \frac{h^2b_n}{a_n}}\\
+    \end{equation}
+    \normalsize
+    
+    Система разностных уравнений:
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            F_n = \frac{F_{n-1} + hb_n({u_p}_n - u_{n-1})}{1 + \frac{h}{z_n} + \frac{h^2b_n}{a_n}}\\
+            u_n = u_{n-1} + h\frac{F_n}{a(z_n)}
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    Алгоритм реализции: 1. Инициализировать $F_0$, $u_0$ 2. Пока $z<=1$ вычисляем $F_n$, $u_n$
+
+    \vspace{1cm}
+    \textbf{4. Получите систему разностных уравнений для решения сформулированной задачи 
+    неяв-ным методом трапеций. Опишите алгоритм реализации полученных уравнений.}
+
+    Неявный метод трапеций для двух переменных: 
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            f_n = f_{n-1} + h \frac{f^{'}(x_{n-1}, f_{n-1}, t_{n-1}) + f^{'}(x_n, f_n, t_n)}{2}\\
+            t_n = t_{n-1} + h \frac{t^{'}(x_{n-1}, t_{n-1}, f_{n-1}) + t^{'}(x_n, t_n, f_n)}{2}
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    Для нашей задачи получаем:
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            F_n = F_{n-1} + h \frac{b(z_{n-1})({u_p}_{n-1} - u_{n-1}) - \frac{F_{n-1}}{z_{n-1}} + b(z_n)({u_p}_n - u_n) - \frac{F_n}{z_n}}{2}\\
+            u_n = u_{n-1} + h \frac{\frac{F_{n-1}}{a(z_{n-1})} + \frac{F_n}{a(z_n)}}{2}
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    Подставляем (11.2) в (11.1) и выражаем $F_n$, получаем систему разностных уравнений:
+
+    \Large
+    \begin{equation}
+        \begin{cases}
+            F_n = \frac{F_{n-1}(1 - \frac{h}{2z_{n-1}} - \frac{h^2b_n}{4a_{n-1}}) + 
+            \frac{h}{2}(b_{n-1}{u_p}_{n-1} + b_n{u_p}_n - u_{n-1}(b_{n-1} + b_n))}
+            {1 + \frac{h}{2z_n} + \frac{h^2b_n}{4a_n}}\\
+            u_n = u_{n-1} + h \frac{\frac{F_{n-1}}{a(z_{n-1})} + \frac{F_n}{a(z_n)}}{2}
+        \end{cases}
+    \end{equation}
+    \normalsize
+
+    Алгоритм реализции: --//-- , поскольку в (12.1) есть деление на $z_{n-1}$, надо на 1-й
+    итерации не поделить на 0 (вынести за цикл)
+
+    \vspace{1cm}
+    \textbf{5. Из каких соображений проводится выбор численного метода того или иного порядка 
+    точности, учитывая, что чем выше порядок точности метода, тем он более сложен и требует, 
+    как правило, больших ресурсов вычислительной системы?}
+
+    \color{red}
+
+    Для некоторых задач не является целесообразным использовать методы более высокого порядка
+    точности. 
+
+    Если аналитически или по найденным решениям можно сделать вывод о том, 
+    что про изводная $P$-го порядка
+    $u^{(P)}(z)$ или даже младших порядков - не существует, то метод порядка точности $P$ - 
+    избыточен. Он будет давать точность 
+    меньшую, чем оправдана объёмом вычислений.
+    
+    От метода порядка точности $P$ мы ожидаем, что погрешность решения убывает 
+    в $k^P$ раз при уменьшении шага в $k$ раз. Если этого не наблюдается на больших шагах, то
+    метод избыточен и его использовать не стоит. 
+
+
+    %\newpage
+    %\section*{ЛР3}
+
+
+\end{document}
